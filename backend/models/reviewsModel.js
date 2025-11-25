@@ -9,4 +9,5 @@
 //modificar una reseña ya creada (un usuario solo puede modificar su propia reseña)
 //obtener las reseñas ya creadas
 //eliminar una reseña (un usuaio solo puede borrar su propia reseña, un usuario administrador puede eliminar la que sea)
+//para las reestricciones de administrador puedes omitirlas por ahora, eso le pregunte al profe el viernes pero creo que le voy a volver a preguntar
 
