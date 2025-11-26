@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const User = require('../models/usersModels')
+const Usuario= require('../models/usuariosModel')
 
 const protect = async(req, res, next) => {
     let token
@@ -13,7 +13,7 @@ const protect = async(req, res, next) => {
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
             //obtener los datos del usaurio desde el token
-            req.user = await User.findById(decoded.id).select('-password')
+            req.usuario = await Usuario.findById(decoded.id).select('-password')
 
             next()
         }

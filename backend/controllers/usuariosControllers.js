@@ -1,20 +1,20 @@
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcryptjs')
-const asyncHandler = require('express-async-handler')
+const asyncHandler = require('express-async-handler') 
 const Usuario = require ('../models/usuariosModel')
 
 const login = asyncHandler(async(req,res) => {
-    const {email, password} = req.body
+    const {telefono, password} = req.body
 
     //verificar que el usuario exista
-    const usuario = await Usuario.findOne({email})
+    const usuario = await Usuario.findOne({telefono})
 
     //Si el usuario existe verifico el hash
     if (usuario && (await bcrypt.compare(password, usuario.password))){
         res.status(200).json({
             _id: usuario.id,
             nombre: usuario.nombre,
-            email: usuario.email,
+            telefono: usuario.telefono,
             token: generarToken(usuario.id)
         })
     }
@@ -22,14 +22,14 @@ const login = asyncHandler(async(req,res) => {
 
 const register = asyncHandler(async(req,res) => {
     //desestructurar el body
-    const {nombre, email, password} = req.body
+    const {nombre, telefono, password, esAdmin} = req.body
     //verificamos que se pasen todos los campos
-    if (!nombre || !email || !password){
+    if (!nombre || !telefono || !password){
         res.status(400)
         throw new Error('Faltan datos')
     }
     //verificamos que ese usuario no existe y si no existe guardarlo
-    const usuarioExists = await Usuario.findOne({email})
+    const usuarioExists = await Usuario.findOne({telefono})
     if (usuarioExists){
         res.status(400)
         throw new Error('Ese usuario ya existe')
@@ -41,8 +41,9 @@ const register = asyncHandler(async(req,res) => {
         //crear el usuario
         const usuario = await Usuario.create({
             nombre,     //nombre:nombre
-            email,      //email:email
-            password: passwordHashed
+            telefono,      //telefono:telefono
+            password: passwordHashed,
+            esAdmin: esAdmin === true || esAdmin === "true" 
         })
 
         //Si el usuario se creo correctamente lo muestro
@@ -50,7 +51,7 @@ const register = asyncHandler(async(req,res) => {
             res.status(201).json({
                 _id: usuario.id,
                 nombre: usuario.nombre,
-                email: usuario.email,
+                telefono: usuario.telefono,
                 password: usuario.password
             })
         } else{
@@ -59,6 +60,44 @@ const register = asyncHandler(async(req,res) => {
         }
     }
 })
+
+const deleteUsuarios = asyncHandler(async(req, res) =>{
+    const usuario = await Usuario.findById(req.params.id)
+    if(!usuario){
+        res.status(404)
+        throw new Error('Usuario no encontrado')
+    }
+
+    if(usuario.id !== req.usuario.id && !req.usuario.esAdmin){
+        res.status(401)
+        throw new Error('Acceso no autorizado')
+    } else{
+        await usuario.deleteOne()
+        res.status(200).json({id: req.params.id})
+    }
+})
+
+const getUsuarios = asyncHandler(async(req, res)=>{
+    if(!req.params.id && req.usuario.esAdmin){
+        const usuarios = await Usuario.find()
+        res.status(200).json(usuarios) 
+    }
+
+    if(!req.usuario.esAdmin){
+        res.status(401)
+        throw new Error('Acceso no autorizado')
+    }
+
+    const usuario = await Usuario.findById(req.params.id)
+
+    if(!usuario){
+        res.status(404)
+        throw new Error('Usuario no encontrado')
+    } else{
+        res.status(200).json(usuario)
+    }
+})
+
 const data = asyncHandler(async(req,res) => {
     res.status(200).json(req.usuario)
 })
@@ -70,5 +109,5 @@ const generarToken = (id) => {
 }
 
 module.exports = {
-    login, register, data
+    login, register, data, deleteUsuarios, getUsuarios
 }

@@ -5,10 +5,14 @@ const usuarioSchema = mongoose.Schema({
         type: String,
         required: [true, 'Por favor ingresa tu nombre']
     },
-    email:{
+    telefono:{
         type: String,
         required: [true, 'Por favor ingresa tu email'],
-        unique: true
+        unique: true,
+        validate: {
+            validator: v => /^[0-9]{10}$/.test(v),
+            message: 'El teléfono debe contener exactamente 10 dígitos numéricos'
+        }
     },
     password:{
         type: String,
