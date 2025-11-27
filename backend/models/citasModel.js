@@ -1,12 +1,54 @@
-//El modelo para citas debe de tener (no necesariamente en ese orden):
-//servicio a realizar
-//fecha y hora de la cita (una cita no puede agendarse a la misma fecha y hora, la duracion de las citas que sea de una hora como en bases)
-//usuario de que solicito la cita
-//fecha de creacion y ultima modificacion
-//nombres del estilista asignado [arreglo]
-//en los controladores debe de haber metodos para lo siguiente
-//crear una cita (debe de llenar el campo de usuario que agendi la cita, obteniendo el nombre desde el token)
-//modificar una cita ya creada (solo los usuarios administradores pueden modificar citas ya agendadas)
-//obtener las citas agendadas
-//eliminar una cita(un usuario puede eliminar su propia cita, un administrador la que sea)
-//para las reestricciones de administrador puedes omitirlas por ahora, eso le pregunte al profe el viernes pero creo que le voy a volver a preguntar
+const mongoose = require('mongoose')
+
+const citaSchema = mongoose.Schema({
+    cliente: {
+        type: String,
+        required: [true, 'Por favor ingresa el nombre del cliente']
+    },
+    servicio: {
+        type: String,
+        required: [true, 'Por favor ingresa el servicio solicitado']
+    },
+    estilista: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'estilista', 
+        required: [true, 'Por favor asigna un estilista']
+    },
+    fecha: {
+        type: Date,
+        required: [true, 'Por favor ingresa la fecha de la cita']
+    },
+    hora: {
+        type: String,
+        required: [true, 'Por favor ingresa la hora de la cita (debe tener el formato HH:MM (24 horas))'],
+        validate: {
+            validator: function(v) {
+                return /^([01]\d|2[0-3]):([0-5]\d)$/.test(v)
+            },
+            message: 'La hora debe tener el formato HH:MM (24 horas)'
+        }
+    },
+    estado: {
+        type: String,
+        enum: ['pendiente', 'confirmada', 'cancelada', 'completada'],
+        default: 'pendiente'
+    },
+    telefono: {
+        type: String,
+        required: [true, 'Por favor ingresa el número de teléfono del cliente'],
+        validate: {
+            validator: function(v) {
+                return /^[0-9]{10}$/.test(v)  
+            },
+            message: 'El teléfono debe contener 10 dígitos'
+        }
+    },
+    notas: {
+        type: String,
+        default: ''
+    }
+}, {
+    timestamps: true
+})
+
+module.exports = mongoose.model('Cita', citaSchema)
