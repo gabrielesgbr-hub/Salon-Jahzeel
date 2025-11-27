@@ -7,7 +7,7 @@ const usuarioSchema = mongoose.Schema({
     },
     telefono:{
         type: String,
-        required: [true, 'Por favor ingresa tu email'],
+        required: [true, 'Por favor ingresa tu telefono'],
         unique: true,
         validate: {
             validator: v => /^[0-9]{10}$/.test(v),

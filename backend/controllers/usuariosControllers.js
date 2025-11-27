@@ -71,10 +71,10 @@ const deleteUsuarios = asyncHandler(async(req, res) =>{
     if(usuario.id !== req.usuario.id && !req.usuario.esAdmin){
         res.status(401)
         throw new Error('Acceso no autorizado')
-    } else{
-        await usuario.deleteOne()
-        res.status(200).json({id: req.params.id})
-    }
+    } 
+
+    await usuario.deleteOne()
+    res.status(200).json({id: req.params.id})
 })
 
 const getUsuarios = asyncHandler(async(req, res)=>{
@@ -93,9 +93,9 @@ const getUsuarios = asyncHandler(async(req, res)=>{
     if(!usuario){
         res.status(404)
         throw new Error('Usuario no encontrado')
-    } else{
-        res.status(200).json(usuario)
     }
+    
+    res.status(200).json(usuario)
 })
 
 const data = asyncHandler(async(req,res) => {
