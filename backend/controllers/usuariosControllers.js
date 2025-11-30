@@ -6,8 +6,18 @@ const Usuario = require ('../models/usuariosModel')
 const login = asyncHandler(async(req,res) => {
     const {telefono, password} = req.body
 
+    if(!telefono || !password){
+        res.status(400)
+        throw new Error('Faltan datos')
+    }
+
     //verificar que el usuario exista
     const usuario = await Usuario.findOne({telefono})
+
+    if(!usuario){
+        res.status(404)
+        throw new Error('Ese telefono no esta registrado')
+    }
 
     //Si el usuario existe verifico el hash
     if (usuario && (await bcrypt.compare(password, usuario.password))){
@@ -17,6 +27,9 @@ const login = asyncHandler(async(req,res) => {
             telefono: usuario.telefono,
             token: generarToken(usuario.id)
         })
+    } else{
+        res.status(400)
+        throw new Error('La contraseña es incorrecta')
     }
 })
 
@@ -51,8 +64,7 @@ const register = asyncHandler(async(req,res) => {
             res.status(201).json({
                 _id: usuario.id,
                 nombre: usuario.nombre,
-                telefono: usuario.telefono,
-                password: usuario.password
+                telefono: usuario.telefono
             })
         } else{
             res.status(400)
@@ -78,23 +90,29 @@ const deleteUsuarios = asyncHandler(async(req, res) =>{
 })
 
 const getUsuarios = asyncHandler(async(req, res)=>{
-    if(!req.params.id && req.usuario.esAdmin){
-        const usuarios = await Usuario.find()
-        res.status(200).json(usuarios) 
-    }
-
     if(!req.usuario.esAdmin){
         res.status(401)
         throw new Error('Acceso no autorizado')
     }
 
-    const usuario = await Usuario.findById(req.params.id)
+    const usuarios = await Usuario.find().select('-password')
+
+    res.status(200).json(usuarios)
+})
+
+const getUsuario = asyncHandler(async(req, res)=>{
+    if(!req.usuario.esAdmin){
+        res.status(401)
+        throw new Error('Acceso no autorizado')
+    }
+
+    const usuario = await Usuario.findById(req.params.id).select('-password')
 
     if(!usuario){
         res.status(404)
         throw new Error('Usuario no encontrado')
     }
-    
+
     res.status(200).json(usuario)
 })
 
@@ -109,5 +127,5 @@ const generarToken = (id) => {
 }
 
 module.exports = {
-    login, register, data, deleteUsuarios, getUsuarios
+    login, register, data, deleteUsuarios, getUsuarios, getUsuario
 }

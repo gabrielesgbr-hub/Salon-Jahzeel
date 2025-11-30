@@ -18,6 +18,10 @@ app.use(express.urlencoded({extended:false}))
 
 app.use('/api/usuarios', require('./routes/usuariosRoutes'))
 app.use('/api/citas', require('./routes/citasRoutes'))
+app.use('/api/productos', require('./routes/productosRoutes'))
+app.use('/api/pedidos', require('./routes/pedidosRoutes'))
+app.use('/api/reviews', require('./routes/reviewsRoutes')) 
+app.use('/api/estilista', require('./routes/estilistaRoutes'))
 
 app.use(errorHandler)
 
