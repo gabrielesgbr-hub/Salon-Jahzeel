@@ -91,6 +91,9 @@ const createPedidos = asyncHandler(async(req,res)=>{
         pedido.total = total
         await pedido.save({session})
 
+        await session.commitTransaction()
+        session.endSession()
+
         res.status(201).json({
             _id: pedido._id,
             usuario: pedido.usuario,
@@ -103,9 +106,6 @@ const createPedidos = asyncHandler(async(req,res)=>{
             total:pedido.total,
             estado:pedido.estado
         })
-
-        await session.commitTransaction()
-        session.endSession()
     } catch (error){
         await session.abortTransaction()
         session.endSession()
@@ -168,10 +168,10 @@ const cancelarPedidos = asyncHandler(async(req,res)=>{
 
         const pedidoCancelado = await Pedido.findByIdAndUpdate(req.params.id, {estado:'cancelado'}, {new:true, runValidators:true, session})
 
-        res.status(200).json(pedidoCancelado)
-
         await session.commitTransaction()
         session.endSession()
+
+        res.status(200).json(pedidoCancelado)
     } catch (error){
         await session.abortTransaction()
         session.endSession()
