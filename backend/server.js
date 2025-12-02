@@ -4,12 +4,14 @@ const dotenv = require('dotenv').config()
 const connectDB = require('./config/db')
 const cors = require('cors')
 const {errorHandler} = require('./middleware/errorMiddleware')
+const estadisticasRoutes = require('./routes/estadisticasRoutes')
 
 const port = process.env.PORT || 5000
 
 connectDB() 
 
 const app = express()
+app.set('json spaces', 2)
 
 app.use(cors())
 
@@ -22,6 +24,7 @@ app.use('/api/productos', require('./routes/productosRoutes'))
 app.use('/api/pedidos', require('./routes/pedidosRoutes'))
 app.use('/api/reviews', require('./routes/reviewsRoutes')) 
 app.use('/api/estilista', require('./routes/estilistaRoutes'))
+app.use('/api/estadisticas', estadisticasRoutes)
 
 app.use(errorHandler)
 
