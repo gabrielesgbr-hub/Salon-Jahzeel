@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const pedidoSchema = mongoose.Schema({
     usuario:{
-        type:String,
+        type:mongoose.Types.ObjectId,
         required: [true, 'Por favor ingresa el nombre del usuario']
     },
     productos:[{
@@ -14,10 +14,14 @@ const pedidoSchema = mongoose.Schema({
         cantidad:{
             type:Number,
             default: 1,
-            validate: {
+            validate:[ {
                 validator: Number.isInteger,
                 message: 'el valor ingresado debe de ser entero'
-            }
+            },
+            {
+                validator: v => v > 0,
+                message: 'la cantidad debe ser mayor a 0'
+            }]
         }
     }],
     total:{
