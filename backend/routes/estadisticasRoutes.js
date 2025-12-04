@@ -18,3 +18,5 @@ router.get('/estilistas', protect, adminAuth, getEstilistasStats)
 router.get('/servicios', protect, adminAuth, getServiciosStats)
 
 module.exports = router
+
+
