@@ -25,6 +25,7 @@ const login = asyncHandler(async(req,res) => {
             _id: usuario.id,
             nombre: usuario.nombre,
             telefono: usuario.telefono,
+            esAdmin: usuario.esAdmin,
             token: generarToken(usuario.id)
         })
     } else{

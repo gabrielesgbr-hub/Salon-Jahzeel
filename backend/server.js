@@ -24,7 +24,7 @@ app.use('/api/productos', require('./routes/productosRoutes'))
 app.use('/api/pedidos', require('./routes/pedidosRoutes'))
 app.use('/api/reviews', require('./routes/reviewsRoutes')) 
 app.use('/api/estilista', require('./routes/estilistaRoutes'))
-app.use('/api/estadisticas', estadisticasRoutes)
+app.use('/api/estadisticas', require('./routes/estadisticasRoutes'))
 
 app.use(errorHandler)
 

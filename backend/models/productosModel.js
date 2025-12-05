@@ -7,6 +7,7 @@ const productoSchema = mongoose.Schema({
     },
     sku:{
         type: String,
+        unique:true,
         required: [true, "Por favor ingresa el SKU del producto"]
     },
     marca:{
@@ -19,7 +20,7 @@ const productoSchema = mongoose.Schema({
     },
     stock:{
         type:Number,
-        minimum: 0,
+        min: 0,
         validate: {
             validator: Number.isInteger,
             message: 'el valor ingresado debe de ser entero'
@@ -28,7 +29,7 @@ const productoSchema = mongoose.Schema({
     },
     precio:{
         type: mongoose.Types.Decimal128,
-        minimum: 0,
+        min: 0,
         required: [true, 'Por favor ingresa el precio del producto'],
         set: v => {
             if (v === null || v === undefined) return v

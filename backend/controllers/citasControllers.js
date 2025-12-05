@@ -168,7 +168,7 @@ const cancelarCita = asyncHandler(async(req, res)=>{
         throw new Error('Acceso no autorizado')
     }
 
-    const citaCancelada = await cita.findByIdAndUpdate(req.params.id, {estado:'cancelada'}, {new:true, runValidators:true})
+    const citaCancelada = await Cita.findByIdAndUpdate(req.params.id, {estado:'cancelada'}, {new:true, runValidators:true})
 
     res.status(200).json(citaCancelada)
 })
@@ -186,7 +186,7 @@ const completarCita = asyncHandler(async(req, res)=>{
         throw new Error('Acceso no autorizado')
     }
 
-    const citaCompletada = await cita.findByIdAndUpdate(req.params.id, {estado:'completada'}, {new:true, runValidators:true})
+    const citaCompletada = await Cita.findByIdAndUpdate(req.params.id, {estado:'completada'}, {new:true, runValidators:true})
 
     res.status(200).json(citaCompletada)
 })
